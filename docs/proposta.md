@@ -71,8 +71,8 @@ O domínio vive em `shared/`, módulo Kotlin comum importado pelas camadas `data
 
 ## 6. Equipe
 
-| Nome | Matrícula |
-| --- | --- |
-| Álvaro Soares dos Santos | 20260001348 |
-| Mário Luiz da Silva Junior | 20260072930 |
-| Ian Mendes Fernandes do Nascimento | 20260072869 |
+| Nome | Matrícula | Papel |
+| --- | --- | --- |
+| Álvaro Soares dos Santos | 20260001348 | Product Owner e desenvolvedor |
+| Mário Luiz da Silva Junior | 20260072930 | Product Owner e desenvolvedor |
+| Ian Mendes Fernandes do Nascimento | 20260072869 | Product Owner e desenvolvedor |
