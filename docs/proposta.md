@@ -76,3 +76,10 @@ O domínio vive em `shared/`, módulo Kotlin comum importado pelas camadas `data
 | Álvaro Soares dos Santos | 20260001348 | Product Owner e desenvolvedor |
 | Mário Luiz da Silva Junior | 20260072930 | Product Owner e desenvolvedor |
 | Ian Mendes Fernandes do Nascimento | 20260072869 | Product Owner e desenvolvedor |
+---
+
+## 7. Vídeo de apresentação
+
+[#7-vídeo-de-apresentação](#7-vídeo-de-apresentação)
+
+[Assista à demonstração do MVP no YouTube](https://youtu.be/i0fONSxesc8) *(vídeo não listado)*
