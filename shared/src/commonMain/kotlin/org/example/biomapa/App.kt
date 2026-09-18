@@ -18,32 +18,16 @@ import org.jetbrains.compose.resources.painterResource
 
 import biomapa.shared.generated.resources.Res
 import biomapa.shared.generated.resources.compose_multiplatform
+import androidx.compose.runtime.Composable
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+        AuthScreen(
+            onAuthSuccess = {
+                println("Utilizador autenticado com sucesso! A redirecionar para o mapa...")
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
-        }
+        )
     }
 }
