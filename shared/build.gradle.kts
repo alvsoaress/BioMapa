@@ -6,8 +6,11 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinSerialization)
     id("com.codingfeline.buildkonfig") version "0.22.0"
 }
+
+val datetimeCompat = "0.7.1-0.6.x-compat"
 
 kotlin {
     listOf(
@@ -58,7 +61,18 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation("io.github.jan-tennert.supabase:gotrue-kt:2.6.1")
+            // "strictly" impede que outra dependência suba para o 0.7.1 puro.
+            // Como é "api", a restrição também vale para os módulos que dependem do shared (desktopApp, androidApp).
+            api("org.jetbrains.kotlinx:kotlinx-datetime") {
+                version { strictly(datetimeCompat) }
+            }
+
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+
+            implementation("io.github.jan-tennert.supabase:postgrest-kt:2.6.1") // Banco de dados
+            implementation("io.github.jan-tennert.supabase:gotrue-kt:2.6.1")     // Autenticação
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
             implementation("io.ktor:ktor-client-core:2.3.8")
             implementation("io.ktor:ktor-client-cio:2.3.8")
         }
