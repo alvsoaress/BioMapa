@@ -58,19 +58,21 @@ kotlin {
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            // "strictly" impede que outra dependência suba para o 0.7.1 puro.
-            // Como é "api", a restrição também vale para os módulos que dependem do shared (desktopApp, androidApp).
-            api("org.jetbrains.kotlinx:kotlinx-datetime") {
+            // --- CORRIGIDO: lifecycle e navigation alinhados na mesma geração de release ---
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3")
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.9.3")
+            api("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
+            // --------------------------------------------------------------------------------
+
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime") {
                 version { strictly(datetimeCompat) }
             }
 
             implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
 
-            implementation("io.github.jan-tennert.supabase:postgrest-kt:2.6.1") // Banco de dados
-            implementation("io.github.jan-tennert.supabase:gotrue-kt:2.6.1")     // Autenticação
+            implementation("io.github.jan-tennert.supabase:postgrest-kt:2.6.1")
+            implementation("io.github.jan-tennert.supabase:gotrue-kt:2.6.1")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
             implementation("io.ktor:ktor-client-core:2.3.8")
@@ -84,6 +86,12 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.androidx.savedstate:savedstate:1.4.0")
+    }
 }
 
 buildkonfig {
