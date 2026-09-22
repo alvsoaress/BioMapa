@@ -55,31 +55,30 @@ fun CreatePlantScreen(onPlantCreated: () -> Unit, onBack: () -> Unit) {
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                OutlinedTextField(
+
+                BioMapaTextField(
                     value = nome,
                     onValueChange = { nome = it },
-                    label = { Text("Nome da Planta (Popular ou Científico)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    label = "Nome da Planta (Popular ou Científico)"
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
+                BioMapaTextField(
                     value = localizacao,
                     onValueChange = { localizacao = it },
-                    label = { Text("Localização (Ex: Perto da Biblioteca)") },
-                    leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Localização") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    label = "Localização (Ex: Perto da Biblioteca)",
+                    leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Localização") }
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
+                BioMapaTextField(
                     value = propriedades,
                     onValueChange = { propriedades = it },
-                    label = { Text("Propriedades Médicas e Usos") },
+                    label = "Propriedades Médicas e Usos",
                     leadingIcon = { Icon(Icons.Default.Info, contentDescription = "Informação") },
-                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = false,
                     minLines = 4,
                     maxLines = 6
                 )
@@ -154,5 +153,9 @@ fun CreatePlantScreen(onPlantCreated: () -> Unit, onBack: () -> Unit) {
 @Preview
 @Composable
 fun CreatePlantScreenPreview() {
-    MaterialTheme { CreatePlantScreen(onPlantCreated = {}, onBack = {}) }
+    BioMapaTheme {
+        Surface {
+            CreatePlantScreen(onPlantCreated = {}, onBack = {})
+        }
+    }
 }
