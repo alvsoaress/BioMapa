@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 actual fun PlantMapCard(
     plantas: List<Planta>,
+    onPlantClick: (Int) -> Unit,
     modifier: Modifier,
 ) {
     IosFallbackPlantMapCard(plantas = plantas, modifier = modifier)

@@ -16,16 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import supabase
 
 internal const val DEV_AUTH_BYPASS = true
@@ -39,6 +41,9 @@ object HomeRoute
 
 @Serializable
 object CreatePlantRoute
+
+@Serializable
+data class DetalhePlantaRoute(val plantaId: Int)
 
 enum class ThemeMode {
     SYSTEM,
@@ -88,6 +93,9 @@ fun App() {
                             onCreatePlantClick = {
                                 navController.navigate(CreatePlantRoute)
                             },
+                            onPlantClick = { plantaId ->
+                                navController.navigate(DetalhePlantaRoute(plantaId))
+                            },
                             onLogoutClick = {
                                 isLoggedIn = false
 
@@ -106,6 +114,16 @@ fun App() {
                             onBack = {
                                 navController.popBackStack()
                             },
+                        )
+                    }
+
+                    composable<DetalhePlantaRoute>(
+                        deepLinks = listOf(navDeepLink<DetalhePlantaRoute>(basePath = "biomapa://planta")),
+                    ) { backStackEntry ->
+                        val route = backStackEntry.toRoute<DetalhePlantaRoute>()
+                        DetalhePlantaScreen(
+                            plantaId = route.plantaId,
+                            onBack = { navController.popBackStack() },
                         )
                     }
                 }
@@ -154,6 +172,7 @@ private fun ThemeToggleButton(
 @Composable
 fun HomeScreen(
     onCreatePlantClick: () -> Unit,
+    onPlantClick: (Int) -> Unit,
     onLogoutClick: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -191,6 +210,7 @@ fun HomeScreen(
 
         PlantMapCard(
             plantas = plantas,
+            onPlantClick = onPlantClick,
             modifier = Modifier.fillMaxWidth().height(280.dp),
         )
 
@@ -232,7 +252,11 @@ fun HomeScreen(
 fun HomeScreenPreview() {
     BioMapaTheme {
         Surface {
-            HomeScreen(onCreatePlantClick = {}, onLogoutClick = {})
+            HomeScreen(
+                onCreatePlantClick = {},
+                onPlantClick = {},
+                onLogoutClick = {},
+            )
         }
     }
 }

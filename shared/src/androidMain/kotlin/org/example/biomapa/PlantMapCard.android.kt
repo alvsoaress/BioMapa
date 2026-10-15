@@ -36,6 +36,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 @Composable
 actual fun PlantMapCard(
     plantas: List<Planta>,
+    onPlantClick: (Int) -> Unit,
     modifier: Modifier,
 ) {
     val context = LocalContext.current
@@ -110,6 +111,10 @@ actual fun PlantMapCard(
                                 title = planta.nome
                                 snippet = planta.localizacao
                                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                                setOnMarkerClickListener { _, _ ->
+                                    planta.id?.let { onPlantClick(it) }
+                                    true
+                                }
                             },
                         )
                     }

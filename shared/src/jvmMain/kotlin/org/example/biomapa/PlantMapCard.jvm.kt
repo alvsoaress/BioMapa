@@ -2,6 +2,7 @@ package org.example.biomapa
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,20 +25,23 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
 actual fun PlantMapCard(
     plantas: List<Planta>,
+    onPlantClick: (Int) -> Unit,
     modifier: Modifier,
 ) {
-    FallbackPlantMapCard(plantas = plantas, modifier = modifier)
+    FallbackPlantMapCard(plantas = plantas, onPlantClick = onPlantClick, modifier = modifier)
 }
 
 @Composable
 internal fun FallbackPlantMapCard(
     plantas: List<Planta>,
+    onPlantClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     title: String = "Mapa do campus",
 ) {
@@ -59,7 +63,26 @@ internal fun FallbackPlantMapCard(
                     Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(22.dp))
-                        .background(mapBackground),
+                        .background(mapBackground)
+                        .pointerInput(plantas) {
+                            detectTapGestures { tap ->
+                                val threshold = 40f
+                                var bestId: Int? = null
+                                var bestDistance = Float.MAX_VALUE
+
+                                plantas.take(12).forEach { planta ->
+                                    val id = planta.id ?: return@forEach
+                                    val position = markerOffsetFor(planta, size.width.toFloat(), size.height.toFloat())
+                                    val distance = (tap - position).getDistance()
+                                    if (distance < threshold && distance < bestDistance) {
+                                        bestDistance = distance
+                                        bestId = id
+                                    }
+                                }
+
+                                bestId?.let { onPlantClick(it) }
+                            }
+                        },
             ) {
                 val gridStep = size.width / 5f
                 for (index in 1..4) {

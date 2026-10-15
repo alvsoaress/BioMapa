@@ -87,7 +87,7 @@ kotlin {
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
-            implementation(compose.components.uiToolingPreview)        // ✅
+            implementation(compose.components.uiToolingPreview)
             // --- CORRIGIDO: lifecycle e navigation alinhados na mesma geração de release ---
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3")
             implementation("org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose:2.9.3")
