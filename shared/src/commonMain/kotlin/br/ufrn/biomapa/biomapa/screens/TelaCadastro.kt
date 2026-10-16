@@ -1,5 +1,8 @@
 package br.ufrn.biomapa.ui.screens
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -50,11 +53,9 @@ fun TelaCadastro(
                 title = { Text("Cadastrar Planta") },
                 navigationIcon = {
                     IconButton(onClick = onVoltar) {
-                        Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.ArrowBack,
-                            contentDescription = "Voltar"
-                        )
-                    }
+		    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+    contentDescription = "Voltar"
+)                    }
                 }
             )
         }
