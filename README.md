@@ -1,35 +1,54 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+# BioMapa 🌿
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Plataforma colaborativa de mapeamento botânico do campus da UFRN. Estudantes cadastram plantas com foto, localização no mapa, descrição e propriedades medicinais, e consultam o que a comunidade já registrou.
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Projeto da disciplina de Sistemas Móveis (2026.2), em Kotlin Multiplatform com Compose Multiplatform. O alvo principal é Android; o alvo desktop é usado para desenvolvimento rápido com Hot Reload.
 
-### Running the apps
+## Vídeos das sprints
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+| Sprint | Entrega | Vídeo |
+| --- | --- | --- |
+| Sprint 0 | Proposta e apresentação do MVP | [Assistir no YouTube](https://youtu.be/i0fONSxesc8) |
+| Sprint 1 | Telas do MVP, navegação tipada, tema e CI | [Assistir no Google Drive](https://drive.google.com/file/d/1xZqimgUg3yWvKZNFqtcjXLqjiGIVT8Mo/view?usp=sharing) |
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- Desktop app:
-  - Hot reload: `./gradlew :desktopApp:hotRun --auto`
-  - Standard run: `./gradlew :desktopApp:run`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+## O que já foi entregue
 
-### Running tests
+**Sprint 1**
+- Telas: Login, Home com mapa das plantas, Nova Descoberta (cadastro de planta) e Detalhe da planta
+- Navegação com Navigation Compose e rotas tipadas (`@Serializable`), com passagem de ID para o detalhe e deep link `biomapa://planta`
+- Tema Material 3 claro e escuro
+- CI no GitHub Actions: compilação, ktlint e detekt
 
-Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
+## Documentação
 
-- Android tests: `./gradlew :shared:testAndroidHostTest`
-- Desktop tests: `./gradlew :shared:jvmTest`
-- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
+- [Proposta do produto](docs/proposta.md): visão, MVP, backlog e decisões técnicas
+- [Uso de IA](docs/uso-de-ia.md)
 
----
+## Estrutura do projeto
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+- [`/shared`](./shared/src): código compartilhado entre as plataformas (telas, navegação, tema e domínio)
+  - [`commonMain`](./shared/src/commonMain/kotlin): código comum a todos os alvos
+- [`/androidApp`](./androidApp): ponto de entrada do app Android
+- [`/desktopApp`](./desktopApp): ponto de entrada do app desktop (JVM)
+- [`/iosApp`](./iosApp/iosApp): ponto de entrada do app iOS
+
+## Como rodar
+
+- Android: `./gradlew :androidApp:assembleDebug`
+- Desktop com Hot Reload: `./gradlew :desktopApp:hotRun --auto`
+- Desktop padrão: `./gradlew :desktopApp:run`
+- iOS: abrir a pasta [`/iosApp`](./iosApp) no Xcode e rodar por lá
+
+## Testes e qualidade
+
+- Testes Android: `./gradlew :shared:testAndroidHostTest`
+- Testes desktop: `./gradlew :shared:jvmTest`
+- Lint e análise estática: `./gradlew ktlintCheck detekt`
+
+## Equipe
+
+| Nome | Papel |
+| --- | --- |
+| Álvaro Soares dos Santos | Product Owner e desenvolvedor |
+| Mário Luiz da Silva Junior | Product Owner e desenvolvedor |
+| Ian Mendes Fernandes do Nascimento | Product Owner e desenvolvedor |
