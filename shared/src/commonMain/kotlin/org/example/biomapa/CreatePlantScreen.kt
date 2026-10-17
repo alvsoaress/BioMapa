@@ -38,13 +38,18 @@ fun CreatePlantScreen(
     var isLoading by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
 
+    // O erro de um campo só aparece depois que a pessoa mexe nele; o Salvar fica desabilitado desde o início.
+    var nomeTocado by remember { mutableStateOf(false) }
+    var localizacaoTocada by remember { mutableStateOf(false) }
+    var propriedadesTocadas by remember { mutableStateOf(false) }
+    val algumCampoTocado = nomeTocado || localizacaoTocada || propriedadesTocadas
+
     val coroutineScope = rememberCoroutineScope()
-    val isFormValid =
-        nome.isNotBlank() &&
-            localizacao.isNotBlank() &&
-            propriedades.isNotBlank() &&
-            selectedLatitude != null &&
-            selectedLongitude != null
+    val erros = validarPlanta(nome, localizacao, selectedLatitude, selectedLongitude, propriedades)
+    val erroNome = erros.nome.takeIf { nomeTocado }
+    val erroLocalizacao = erros.localizacao.takeIf { localizacaoTocada }
+    val erroCoordenadas = erros.coordenadas.takeIf { algumCampoTocado }
+    val erroPropriedades = erros.propriedades.takeIf { propriedadesTocadas }
 
     Column(
         modifier =
@@ -83,17 +88,27 @@ fun CreatePlantScreen(
                 Column(modifier = Modifier.padding(16.dp)) {
                     BioMapaTextField(
                         value = nome,
-                        onValueChange = { nome = it },
+                        onValueChange = {
+                            nome = it
+                            nomeTocado = true
+                        },
                         label = "Nome da Planta (Popular ou Científico)",
+                        isError = erroNome != null,
+                        supportingText = erroNome,
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     BioMapaTextField(
                         value = localizacao,
-                        onValueChange = { localizacao = it },
+                        onValueChange = {
+                            localizacao = it
+                            localizacaoTocada = true
+                        },
                         label = "Referência da localização (Ex: Perto da Biblioteca)",
                         leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
+                        isError = erroLocalizacao != null,
+                        supportingText = erroLocalizacao,
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -107,17 +122,30 @@ fun CreatePlantScreen(
                         },
                         modifier = Modifier.fillMaxWidth().height(240.dp),
                     )
+                    if (erroCoordenadas != null) {
+                        Text(
+                            text = erroCoordenadas,
+                            modifier = Modifier.padding(start = 16.dp, top = 4.dp),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     BioMapaTextField(
                         value = propriedades,
-                        onValueChange = { propriedades = it },
+                        onValueChange = {
+                            propriedades = it
+                            propriedadesTocadas = true
+                        },
                         label = "Propriedades Médicas e Usos",
                         leadingIcon = { Icon(Icons.Default.Info, contentDescription = null) },
                         singleLine = false,
                         minLines = 4,
                         maxLines = 6,
+                        isError = erroPropriedades != null,
+                        supportingText = erroPropriedades,
                     )
                 }
             }
@@ -178,7 +206,7 @@ fun CreatePlantScreen(
                         }
                     },
                     modifier = Modifier.weight(1f).height(50.dp),
-                    enabled = !isLoading && isFormValid,
+                    enabled = !isLoading && erros.valido,
                 ) {
                     if (isLoading) {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)

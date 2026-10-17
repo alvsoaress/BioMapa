@@ -14,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -198,15 +199,30 @@ fun HomeScreen(
             }.getOrElse { emptyList() }
     }
 
-    val onLogout: () -> Unit = {
-        coroutineScope.launch {
-            if (!DEV_AUTH_BYPASS) {
-                supabase.auth.signOut()
+    HomeContent(
+        plantas = plantas,
+        onCreatePlantClick = onCreatePlantClick,
+        onPlantClick = onPlantClick,
+        onLogoutClick = {
+            coroutineScope.launch {
+                if (!DEV_AUTH_BYPASS) {
+                    supabase.auth.signOut()
+                }
+                onLogoutClick()
             }
-            onLogoutClick()
-        }
-    }
+        },
+        actions = actions,
+    )
+}
 
+@Composable
+fun HomeContent(
+    plantas: List<Planta>,
+    onCreatePlantClick: () -> Unit,
+    onPlantClick: (Int) -> Unit,
+    onLogoutClick: () -> Unit,
+    actions: @Composable () -> Unit = {},
+) {
     // O layout depende da largura da janela, não da orientação nem do tipo de aparelho.
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val contentModifier = Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp)
@@ -225,7 +241,15 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth().height(280.dp),
                 )
                 Spacer(modifier = Modifier.height(28.dp))
-                HomeButtons(onCreatePlantClick = onCreatePlantClick, onLogoutClick = onLogout)
+                HomeButtons(onCreatePlantClick = onCreatePlantClick, onLogoutClick = onLogoutClick)
+                Spacer(modifier = Modifier.height(28.dp))
+                PlantListTitle()
+                if (plantas.isEmpty()) {
+                    EmptyPlantList()
+                }
+                plantas.forEach { planta ->
+                    PlantListItem(planta = planta, onPlantClick = onPlantClick)
+                }
             }
         } else {
             Row(
@@ -243,23 +267,10 @@ fun HomeScreen(
                 ) {
                     item { HomeHeader(actions = actions) }
                     item { HomeIntro(textAlign = TextAlign.Start) }
-                    item { HomeButtons(onCreatePlantClick = onCreatePlantClick, onLogoutClick = onLogout) }
-                    item {
-                        Text(
-                            text = "Plantas mapeadas",
-                            modifier = Modifier.semantics { heading() },
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
+                    item { HomeButtons(onCreatePlantClick = onCreatePlantClick, onLogoutClick = onLogoutClick) }
+                    item { PlantListTitle() }
                     if (plantas.isEmpty()) {
-                        item {
-                            Text(
-                                text = "Nenhuma planta cadastrada ainda.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        item { EmptyPlantList() }
                     }
                     items(plantas, key = { it.id ?: it.hashCode() }) { planta ->
                         PlantListItem(planta = planta, onPlantClick = onPlantClick)
@@ -267,6 +278,43 @@ fun HomeScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun PlantListTitle() {
+    Text(
+        text = "Plantas mapeadas",
+        modifier = Modifier.fillMaxWidth().semantics { heading() },
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
+    )
+}
+
+@Composable
+private fun EmptyPlantList() {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Icon(
+            imageVector = Icons.Default.Eco,
+            contentDescription = null,
+            modifier = Modifier.size(48.dp),
+            tint = MaterialTheme.colorScheme.primary,
+        )
+        Text(
+            text = "Nenhuma planta mapeada ainda",
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = "Que tal ser a primeira pessoa a registrar uma descoberta no campus? Toque em \"Registrar Nova Planta\".",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
@@ -354,12 +402,57 @@ private fun PlantListItem(
     )
 }
 
+private val PlantasDeExemplo =
+    listOf(
+        Planta(
+            id = 1,
+            userId = DEV_USER_ID,
+            nome = "Boldo",
+            localizacao = "Próximo ao Setor de Aulas II",
+            latitude = -5.8405,
+            longitude = -35.1990,
+            propriedadesMedicas = "Auxilia na digestão.",
+        ),
+        Planta(
+            id = 2,
+            userId = DEV_USER_ID,
+            nome = "Erva-cidreira",
+            localizacao = "Jardim da Biblioteca Central Zila Mamede",
+            latitude = -5.8390,
+            longitude = -35.2010,
+            propriedadesMedicas = "Calmante leve.",
+        ),
+        Planta(
+            id = 3,
+            userId = DEV_USER_ID,
+            nome = "Aroeira-vermelha (Schinus terebinthifolia)",
+            localizacao = "Canteiro em frente ao Restaurante Universitário",
+            propriedadesMedicas = "Anti-inflamatória e cicatrizante.",
+        ),
+    )
+
 @Preview
 @Composable
-fun HomeScreenPreview() {
+fun HomeContentPreview() {
     BioMapaTheme {
         Surface {
-            HomeScreen(
+            HomeContent(
+                plantas = PlantasDeExemplo,
+                onCreatePlantClick = {},
+                onPlantClick = {},
+                onLogoutClick = {},
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomeContentVaziaPreview() {
+    BioMapaTheme {
+        Surface {
+            HomeContent(
+                plantas = emptyList(),
                 onCreatePlantClick = {},
                 onPlantClick = {},
                 onLogoutClick = {},

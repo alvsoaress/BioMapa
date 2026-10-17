@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -42,6 +43,11 @@ actual fun PlantMapCard(
     onPlantClick: (Int) -> Unit,
     modifier: Modifier,
 ) {
+    if (LocalInspectionMode.current) {
+        MapPreviewPlaceholder(modifier)
+        return
+    }
+
     val context = LocalContext.current
     var locationPermissionGranted by remember { mutableStateOf(hasLocationPermission(context)) }
     val permissionLauncher =
@@ -140,6 +146,23 @@ actual fun PlantMapCard(
                     color = MaterialTheme.colorScheme.onSurface,
                 )
             }
+        }
+    }
+}
+
+// Preview do IDE não tem Activity (permissões) nem suporta o MapView do osmdroid.
+@Composable
+internal fun MapPreviewPlaceholder(modifier: Modifier) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                text = "Mapa (indisponível no preview)",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
