@@ -12,6 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -34,7 +36,10 @@ fun isPasswordValid(password: String): Boolean {
 }
 
 @Composable
-fun AuthScreen(onAuthSuccess: () -> Unit) {
+fun AuthScreen(
+    onAuthSuccess: () -> Unit,
+    actions: @Composable () -> Unit = {},
+) {
     var emailText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
     var isLoginMode by remember { mutableStateOf(true) }
@@ -60,20 +65,28 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState()),
+                .safeDrawingPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            actions()
+        }
         Icon(
             imageVector = Icons.Default.Person,
-            contentDescription = "Logo",
+            contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "BioMapa",
+            modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -88,7 +101,7 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.widthIn(max = LarguraMaximaConteudo).fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         ) {
@@ -115,7 +128,7 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
                     value = emailText,
                     onValueChange = { emailText = it },
                     label = "E-mail acadêmico ou pessoal",
-                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email") },
+                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     isError = emailError,
                 )
@@ -134,7 +147,7 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
                     value = passwordText,
                     onValueChange = { passwordText = it },
                     label = "Senha (mínimo 6 caracteres)",
-                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Senha") },
+                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     isError = passwordError,

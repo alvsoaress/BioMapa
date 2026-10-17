@@ -3,9 +3,13 @@ package org.example.biomapa
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -24,7 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
@@ -35,6 +42,7 @@ import supabase
 fun DetalhePlantaScreen(
     plantaId: Int,
     onBack: () -> Unit,
+    actions: @Composable () -> Unit = {},
 ) {
     var planta by remember { mutableStateOf<Planta?>(null) }
     var carregando by remember { mutableStateOf(true) }
@@ -65,7 +73,14 @@ fun DetalhePlantaScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalhes da planta") },
+                title = {
+                    Text(
+                        text = "Detalhes da planta",
+                        modifier = Modifier.semantics { heading() },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -74,6 +89,7 @@ fun DetalhePlantaScreen(
                         )
                     }
                 },
+                actions = { actions() },
             )
         },
     ) { padding ->
@@ -93,7 +109,13 @@ fun DetalhePlantaScreen(
                 else -> {
                     val p = planta!!
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(24.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxHeight()
+                                .widthIn(max = LarguraMaximaConteudo)
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState())
+                                .padding(24.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         Text(
@@ -105,9 +127,12 @@ fun DetalhePlantaScreen(
                         Text(
                             text = "Local: ${p.localizacao}",
                             style = MaterialTheme.typography.titleMedium,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
                         )
                         Text(
                             text = "Propriedades medicinais",
+                            modifier = Modifier.semantics { heading() },
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                         )

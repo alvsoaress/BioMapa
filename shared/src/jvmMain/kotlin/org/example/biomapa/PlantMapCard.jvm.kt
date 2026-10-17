@@ -66,7 +66,8 @@ internal fun FallbackPlantMapCard(
                         .background(mapBackground)
                         .pointerInput(plantas) {
                             detectTapGestures { tap ->
-                                val threshold = 40f
+                                // Raio de 24dp: alvo de toque de 48x48dp em volta de cada marcador.
+                                val threshold = MarkerTouchRadius.toPx()
                                 var bestId: Int? = null
                                 var bestDistance = Float.MAX_VALUE
 
@@ -194,6 +195,8 @@ private fun LegendItem(
         )
     }
 }
+
+private val MarkerTouchRadius = 24.dp
 
 private fun markerOffsetFor(
     planta: Planta,

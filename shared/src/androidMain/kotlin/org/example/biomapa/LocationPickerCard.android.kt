@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import org.osmdroid.config.Configuration
@@ -41,6 +42,11 @@ actual fun LocationPickerCard(
     onLocationSelected: (latitude: Double, longitude: Double) -> Unit,
     modifier: Modifier,
 ) {
+    if (LocalInspectionMode.current) {
+        MapPreviewPlaceholder(modifier)
+        return
+    }
+
     val context = LocalContext.current
     var locationPermissionGranted by remember { mutableStateOf(hasLocationPermission(context)) }
     var currentLocation by remember { mutableStateOf(lastKnownGeoPoint(context)) }
