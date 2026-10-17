@@ -12,6 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -77,13 +79,14 @@ fun AuthScreen(
         }
         Icon(
             imageVector = Icons.Default.Person,
-            contentDescription = "Logo",
+            contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "BioMapa",
+            modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -125,7 +128,7 @@ fun AuthScreen(
                     value = emailText,
                     onValueChange = { emailText = it },
                     label = "E-mail acadêmico ou pessoal",
-                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email") },
+                    leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     isError = emailError,
                 )
@@ -144,7 +147,7 @@ fun AuthScreen(
                     value = passwordText,
                     onValueChange = { passwordText = it },
                     label = "Senha (mínimo 6 caracteres)",
-                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Senha") },
+                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     isError = passwordError,

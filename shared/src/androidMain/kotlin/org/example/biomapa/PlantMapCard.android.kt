@@ -1,5 +1,7 @@
 package org.example.biomapa
 
+import android.content.res.Resources
+import android.graphics.drawable.InsetDrawable
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -32,6 +34,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import kotlin.math.roundToInt
 
 @Composable
 actual fun PlantMapCard(
@@ -110,6 +113,7 @@ actual fun PlantMapCard(
                                 position = GeoPoint(latitude, longitude)
                                 title = planta.nome
                                 snippet = planta.localizacao
+                                withMinimumTouchTarget()
                                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                                 setOnMarkerClickListener { _, _ ->
                                     planta.id?.let { onPlantClick(it) }
@@ -139,6 +143,18 @@ actual fun PlantMapCard(
         }
     }
 }
+
+// O ícone padrão do osmdroid tem 27x48dp. Uma margem transparente nas laterais
+// leva o alvo de toque a 48x48dp, já que o toque no marcador usa os limites do ícone.
+private fun Marker.withMinimumTouchTarget() {
+    val base = icon ?: return
+    val minSize = (MinTouchTargetDp * Resources.getSystem().displayMetrics.density).roundToInt()
+    val horizontal = ((minSize - base.intrinsicWidth) / 2).coerceAtLeast(0)
+    val top = (minSize - base.intrinsicHeight).coerceAtLeast(0)
+    icon = InsetDrawable(base, horizontal, top, horizontal, 0)
+}
+
+private const val MinTouchTargetDp = 48
 
 private data class MapPoint(val latitude: Double, val longitude: Double)
 

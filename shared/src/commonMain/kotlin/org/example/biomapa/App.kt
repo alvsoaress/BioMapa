@@ -19,6 +19,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -165,9 +168,9 @@ private fun ThemeToggleButton(
 ) {
     val (icon, description) =
         when (themeMode) {
-            ThemeMode.SYSTEM -> Icons.Default.BrightnessAuto to "Tema: Automático (do sistema)"
-            ThemeMode.LIGHT -> Icons.Default.LightMode to "Tema: Claro"
-            ThemeMode.DARK -> Icons.Default.DarkMode to "Tema: Escuro"
+            ThemeMode.SYSTEM -> Icons.Default.BrightnessAuto to "Alternar tema. Atual: automático, do sistema"
+            ThemeMode.LIGHT -> Icons.Default.LightMode to "Alternar tema. Atual: claro"
+            ThemeMode.DARK -> Icons.Default.DarkMode to "Alternar tema. Atual: escuro"
         }
 
     FilledTonalIconButton(
@@ -244,6 +247,7 @@ fun HomeScreen(
                     item {
                         Text(
                             text = "Plantas mapeadas",
+                            modifier = Modifier.semantics { heading() },
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                         )
@@ -279,7 +283,7 @@ private fun HomeHeader(actions: @Composable () -> Unit) {
             color = MaterialTheme.colorScheme.primary,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).semantics { heading() },
         )
         actions()
     }
@@ -306,7 +310,7 @@ private fun HomeButtons(
             modifier = Modifier.fillMaxWidth().height(60.dp),
             shape = MaterialTheme.shapes.large,
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Adicionar")
+            Icon(Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 "Registrar Nova Planta",
@@ -321,7 +325,7 @@ private fun HomeButtons(
             modifier = Modifier.fillMaxWidth().height(60.dp),
             shape = MaterialTheme.shapes.large,
         ) {
-            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair")
+            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 "Sair da conta",
@@ -341,7 +345,12 @@ private fun PlantListItem(
     ListItem(
         headlineContent = { Text(planta.nome, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         supportingContent = { Text(planta.localizacao, maxLines = 2, overflow = TextOverflow.Ellipsis) },
-        modifier = Modifier.clickable(enabled = planta.id != null) { planta.id?.let(onPlantClick) },
+        modifier =
+            Modifier.clickable(
+                enabled = planta.id != null,
+                onClickLabel = "Ver detalhes",
+                role = Role.Button,
+            ) { planta.id?.let(onPlantClick) },
     )
 }
 

@@ -12,6 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -62,7 +64,7 @@ fun CreatePlantScreen(
                     color = MaterialTheme.colorScheme.primary,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).semantics { heading() },
                 )
                 actions()
             }
@@ -91,7 +93,7 @@ fun CreatePlantScreen(
                         value = localizacao,
                         onValueChange = { localizacao = it },
                         label = "Referência da localização (Ex: Perto da Biblioteca)",
-                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Localização") },
+                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -112,7 +114,7 @@ fun CreatePlantScreen(
                         value = propriedades,
                         onValueChange = { propriedades = it },
                         label = "Propriedades Médicas e Usos",
-                        leadingIcon = { Icon(Icons.Default.Info, contentDescription = "Informação") },
+                        leadingIcon = { Icon(Icons.Default.Info, contentDescription = null) },
                         singleLine = false,
                         minLines = 4,
                         maxLines = 6,
