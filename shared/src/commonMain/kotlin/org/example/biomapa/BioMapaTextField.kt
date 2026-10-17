@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun BioMapaTextField(
@@ -26,7 +27,7 @@ fun BioMapaTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
+        label = { Text(label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         modifier = modifier.fillMaxWidth(),
         leadingIcon = leadingIcon,
         visualTransformation = visualTransformation,

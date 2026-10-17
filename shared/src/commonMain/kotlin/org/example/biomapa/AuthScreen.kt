@@ -34,7 +34,10 @@ fun isPasswordValid(password: String): Boolean {
 }
 
 @Composable
-fun AuthScreen(onAuthSuccess: () -> Unit) {
+fun AuthScreen(
+    onAuthSuccess: () -> Unit,
+    actions: @Composable () -> Unit = {},
+) {
     var emailText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
     var isLoginMode by remember { mutableStateOf(true) }
@@ -60,11 +63,18 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState()),
+                .safeDrawingPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            actions()
+        }
         Icon(
             imageVector = Icons.Default.Person,
             contentDescription = "Logo",
@@ -88,7 +98,7 @@ fun AuthScreen(onAuthSuccess: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.widthIn(max = LarguraMaximaConteudo).fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         ) {
