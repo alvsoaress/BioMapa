@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -57,10 +56,10 @@ actual fun PlantMapCard(
             locationPermissionGranted = result.values.any { it }
         }
 
-    val center = remember(plantas) { plantas.firstWithCoordinates() ?: CampusCenter }
+    val center = remember(plantas) { plantas.firstWithCoordinates() ?: MapPoint(CampusCenter.latitude, CampusCenter.longitude) }
     val mapView =
         remember {
-            Configuration.getInstance().userAgentValue = context.packageName
+            configureOsmdroid(context)
             val tileProvider =
                 MapTileProviderBasic(context).apply {
                     setTileSource(TileSourceFactory.MAPNIK)
@@ -181,7 +180,6 @@ private const val MinTouchTargetDp = 48
 
 private data class MapPoint(val latitude: Double, val longitude: Double)
 
-private val CampusCenter = MapPoint(latitude = -23.5505, longitude = -46.6333)
 
 private fun List<Planta>.firstWithCoordinates(): MapPoint? {
     val planta = firstOrNull { it.latitude != null && it.longitude != null } ?: return null

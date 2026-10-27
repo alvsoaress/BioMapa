@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -71,11 +70,11 @@ actual fun LocationPickerCard(
 
     val initialPoint =
         remember(selectedLatitude, selectedLongitude, currentLocation) {
-            GeoPoint(selectedLatitude ?: currentLocation?.latitude ?: -23.5505, selectedLongitude ?: currentLocation?.longitude ?: -46.6333)
+            GeoPoint(selectedLatitude ?: currentLocation?.latitude ?: CampusCenter.latitude, selectedLongitude ?: currentLocation?.longitude ?: CampusCenter.longitude)
         }
     val mapView =
         remember {
-            Configuration.getInstance().userAgentValue = context.packageName
+            configureOsmdroid(context)
             val tileProvider =
                 MapTileProviderBasic(context).apply {
                     setTileSource(TileSourceFactory.MAPNIK)
