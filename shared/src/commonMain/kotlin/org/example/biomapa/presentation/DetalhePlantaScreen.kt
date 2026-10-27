@@ -1,4 +1,4 @@
-package org.example.biomapa
+package org.example.biomapa.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,14 +34,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
+import org.example.biomapa.domain.model.Planta
+import org.example.biomapa.domain.repository.PlantaRepository
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import supabase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetalhePlantaScreen(
+    plantaRepository: PlantaRepository,
     plantaId: Int,
     onBack: () -> Unit,
     actions: @Composable () -> Unit = {},
@@ -50,25 +50,7 @@ fun DetalhePlantaScreen(
     var carregando by remember { mutableStateOf(true) }
 
     LaunchedEffect(plantaId) {
-        planta =
-            runCatching {
-                supabase.postgrest["plantas"]
-                    .select(
-                        columns =
-                            Columns.list(
-                                "id",
-                                "user_id",
-                                "nome",
-                                "localizacao",
-                                "latitude",
-                                "longitude",
-                                "propriedades_medicas",
-                                "foto_url",
-                            ),
-                    )
-                    .decodeList<Planta>()
-                    .firstOrNull { it.id == plantaId }
-            }.getOrNull()
+        planta = runCatching { plantaRepository.buscarPorId(plantaId) }.getOrNull()
         carregando = false
     }
 
@@ -170,7 +152,7 @@ fun DetalhePlantaScreenPreview() {
                 planta =
                     Planta(
                         id = 1,
-                        userId = DEV_USER_ID,
+                        userId = PREVIEW_USER_ID,
                         nome = "Boldo",
                         localizacao = "Próximo ao Setor de Aulas II",
                         propriedadesMedicas = "Auxilia na digestão e no alívio de desconfortos estomacais.",

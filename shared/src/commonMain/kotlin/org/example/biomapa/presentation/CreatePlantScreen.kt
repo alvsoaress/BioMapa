@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package org.example.biomapa
+package org.example.biomapa.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -18,13 +18,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.jan.supabase.gotrue.auth
-import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
-import supabase
+import org.example.biomapa.domain.model.Planta
+import org.example.biomapa.domain.repository.AuthRepository
+import org.example.biomapa.domain.repository.PlantaRepository
+import org.example.biomapa.domain.validacao.validarPlanta
 
 @Composable
 fun CreatePlantScreen(
+    plantaRepository: PlantaRepository,
+    authRepository: AuthRepository,
     onPlantCreated: () -> Unit,
     onBack: () -> Unit,
     actions: @Composable () -> Unit = {},
@@ -179,7 +182,7 @@ fun CreatePlantScreen(
                             isLoading = true
                             message = null
                             try {
-                                val currentUserId = supabase.auth.currentUserOrNull()?.id ?: DEV_USER_ID.takeIf { DEV_AUTH_BYPASS }
+                                val currentUserId = authRepository.usuarioAtualId()
                                 if (currentUserId == null) {
                                     message = "Erro: Usuário não autenticado."
                                     return@launch
@@ -195,7 +198,7 @@ fun CreatePlantScreen(
                                         propriedadesMedicas = propriedades,
                                     )
 
-                                supabase.postgrest["plantas"].insert(novaPlanta)
+                                plantaRepository.cadastrar(novaPlanta)
                                 message = "Planta cadastrada com sucesso!"
                                 onPlantCreated()
                             } catch (e: Exception) {
@@ -225,7 +228,12 @@ fun CreatePlantScreen(
 fun CreatePlantScreenPreview() {
     BioMapaTheme {
         Surface {
-            CreatePlantScreen(onPlantCreated = {}, onBack = {})
+            CreatePlantScreen(
+                plantaRepository = PlantaRepositoryPreview,
+                authRepository = AuthRepositoryPreview,
+                onPlantCreated = {},
+                onBack = {},
+            )
         }
     }
 }

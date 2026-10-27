@@ -1,4 +1,4 @@
-package org.example.biomapa
+package org.example.biomapa.domain.validacao
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

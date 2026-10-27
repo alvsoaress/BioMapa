@@ -106,9 +106,13 @@ kotlin {
 
             implementation("io.ktor:ktor-client-core:2.3.8")
             implementation("io.ktor:ktor-client-cio:2.3.8")
+
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.koin.test)
         }
     }
 }

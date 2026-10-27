@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package org.example.biomapa
+package org.example.biomapa.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -20,23 +20,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.github.jan.supabase.gotrue.auth
-import io.github.jan.supabase.gotrue.providers.builtin.Email
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import supabase
-
-fun isEmailValid(email: String): Boolean {
-    return email.isNotBlank() && email.contains("@") && email.contains(".")
-}
-
-fun isPasswordValid(password: String): Boolean {
-    return password.length >= 6
-}
+import org.example.biomapa.domain.repository.AuthRepository
+import org.example.biomapa.domain.validacao.isEmailValid
+import org.example.biomapa.domain.validacao.isPasswordValid
 
 @Composable
 fun AuthScreen(
+    authRepository: AuthRepository,
     onAuthSuccess: () -> Unit,
     actions: @Composable () -> Unit = {},
 ) {
@@ -179,20 +170,9 @@ fun AuthScreen(
                             errorMessage = null
                             try {
                                 if (isLoginMode) {
-                                    supabase.auth.signInWith(Email) {
-                                        email = emailText
-                                        password = passwordText
-                                    }
+                                    authRepository.entrar(emailText, passwordText)
                                 } else {
-                                    supabase.auth.signUpWith(Email) {
-                                        email = emailText
-                                        password = passwordText
-                                        data =
-                                            buildJsonObject {
-                                                put("nome", nomeText)
-                                                put("sobrenome", sobrenomeText)
-                                            }
-                                    }
+                                    authRepository.criarConta(nomeText, sobrenomeText, emailText, passwordText)
                                 }
                                 onAuthSuccess()
                             } catch (e: Exception) {
@@ -239,7 +219,7 @@ fun AuthScreen(
 fun AuthScreenPreview() {
     BioMapaTheme {
         Surface {
-            AuthScreen(onAuthSuccess = {})
+            AuthScreen(authRepository = AuthRepositoryPreview, onAuthSuccess = {})
         }
     }
 }

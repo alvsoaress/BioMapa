@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package org.example.biomapa
+package org.example.biomapa.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

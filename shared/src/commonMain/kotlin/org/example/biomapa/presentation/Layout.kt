@@ -1,4 +1,4 @@
-package org.example.biomapa
+package org.example.biomapa.presentation
 
 import androidx.compose.ui.unit.dp
 

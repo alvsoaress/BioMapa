@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package org.example.biomapa
+package org.example.biomapa.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -32,16 +32,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import io.github.jan.supabase.gotrue.auth
-import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.example.biomapa.domain.model.Planta
+import org.example.biomapa.domain.repository.AuthRepository
+import org.example.biomapa.domain.repository.PlantaRepository
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import supabase
-
-internal const val DEV_AUTH_BYPASS = true
-internal const val DEV_USER_ID = "00000000-0000-0000-0000-000000000000"
+import org.koin.compose.koinInject
 
 @Serializable
 object AuthRoute
@@ -62,7 +59,10 @@ enum class ThemeMode {
 }
 
 @Composable
-fun App() {
+fun App(
+    authRepository: AuthRepository = koinInject(),
+    plantaRepository: PlantaRepository = koinInject(),
+) {
     var themeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
 
     val isDarkTheme =
@@ -93,7 +93,7 @@ fun App() {
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
-                var isLoggedIn by remember { mutableStateOf(DEV_AUTH_BYPASS || supabase.auth.currentSessionOrNull() != null) }
+                var isLoggedIn by remember { mutableStateOf(authRepository.estaLogado()) }
 
                 val navController = rememberNavController()
 
@@ -103,6 +103,7 @@ fun App() {
                 ) {
                     composable<AuthRoute> {
                         AuthScreen(
+                            authRepository = authRepository,
                             onAuthSuccess = {
                                 isLoggedIn = true
 
@@ -116,6 +117,8 @@ fun App() {
 
                     composable<HomeRoute> {
                         HomeScreen(
+                            plantaRepository = plantaRepository,
+                            authRepository = authRepository,
                             onCreatePlantClick = {
                                 navController.navigate(CreatePlantRoute)
                             },
@@ -135,6 +138,8 @@ fun App() {
 
                     composable<CreatePlantRoute> {
                         CreatePlantScreen(
+                            plantaRepository = plantaRepository,
+                            authRepository = authRepository,
                             onPlantCreated = {
                                 navController.popBackStack()
                             },
@@ -150,6 +155,7 @@ fun App() {
                     ) { backStackEntry ->
                         val route = backStackEntry.toRoute<DetalhePlantaRoute>()
                         DetalhePlantaScreen(
+                            plantaRepository = plantaRepository,
                             plantaId = route.plantaId,
                             onBack = { navController.popBackStack() },
                             actions = themeToggle,
@@ -184,6 +190,8 @@ private fun ThemeToggleButton(
 
 @Composable
 fun HomeScreen(
+    plantaRepository: PlantaRepository,
+    authRepository: AuthRepository,
     onCreatePlantClick: () -> Unit,
     onPlantClick: (Int) -> Unit,
     onLogoutClick: () -> Unit,
@@ -193,10 +201,7 @@ fun HomeScreen(
     var plantas by remember { mutableStateOf<List<Planta>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        plantas =
-            runCatching {
-                supabase.postgrest["plantas"].select(columns = Columns.list("id", "user_id", "nome", "localizacao", "latitude", "longitude", "propriedades_medicas", "foto_url")).decodeList<Planta>()
-            }.getOrElse { emptyList() }
+        plantas = runCatching { plantaRepository.listar() }.getOrElse { emptyList() }
     }
 
     HomeContent(
@@ -205,9 +210,7 @@ fun HomeScreen(
         onPlantClick = onPlantClick,
         onLogoutClick = {
             coroutineScope.launch {
-                if (!DEV_AUTH_BYPASS) {
-                    supabase.auth.signOut()
-                }
+                authRepository.sair()
                 onLogoutClick()
             }
         },
@@ -406,7 +409,7 @@ private val PlantasDeExemplo =
     listOf(
         Planta(
             id = 1,
-            userId = DEV_USER_ID,
+            userId = PREVIEW_USER_ID,
             nome = "Boldo",
             localizacao = "Próximo ao Setor de Aulas II",
             latitude = -5.8405,
@@ -415,7 +418,7 @@ private val PlantasDeExemplo =
         ),
         Planta(
             id = 2,
-            userId = DEV_USER_ID,
+            userId = PREVIEW_USER_ID,
             nome = "Erva-cidreira",
             localizacao = "Jardim da Biblioteca Central Zila Mamede",
             latitude = -5.8390,
@@ -424,7 +427,7 @@ private val PlantasDeExemplo =
         ),
         Planta(
             id = 3,
-            userId = DEV_USER_ID,
+            userId = PREVIEW_USER_ID,
             nome = "Aroeira-vermelha (Schinus terebinthifolia)",
             localizacao = "Canteiro em frente ao Restaurante Universitário",
             propriedadesMedicas = "Anti-inflamatória e cicatrizante.",

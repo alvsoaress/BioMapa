@@ -1,4 +1,4 @@
-package org.example.biomapa
+package org.example.biomapa.presentation
 
 import android.Manifest
 import android.content.Context

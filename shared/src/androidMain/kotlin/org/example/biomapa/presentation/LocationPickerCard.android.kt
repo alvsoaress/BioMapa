@@ -1,4 +1,4 @@
-package org.example.biomapa
+package org.example.biomapa.presentation
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
