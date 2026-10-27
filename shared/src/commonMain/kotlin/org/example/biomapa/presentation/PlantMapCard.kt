@@ -1,4 +1,6 @@
-package org.example.biomapa
+package org.example.biomapa.presentation
+
+import org.example.biomapa.domain.model.Planta
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

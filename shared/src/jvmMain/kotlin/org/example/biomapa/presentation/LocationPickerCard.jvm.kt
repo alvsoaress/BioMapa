@@ -1,4 +1,4 @@
-package org.example.biomapa
+package org.example.biomapa.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +42,7 @@ actual fun LocationPickerCard(
                 Text(
                     text =
                         if (selectedLatitude != null && selectedLongitude != null) {
-                            "Localização marcada para teste iOS."
+                            "Localização marcada para teste desktop."
                         } else {
                             "No Android, toque no mapa Mapbox para marcar a planta."
                         },

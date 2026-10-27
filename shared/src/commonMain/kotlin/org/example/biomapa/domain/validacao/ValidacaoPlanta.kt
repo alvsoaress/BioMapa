@@ -1,4 +1,4 @@
-package org.example.biomapa
+package org.example.biomapa.domain.validacao
 
 // Mensagem de erro de cada campo do cadastro de planta; null quando o campo está válido.
 data class ErrosPlanta(
