@@ -199,7 +199,8 @@ fun CreatePlantScreen(
                                 message = "Planta cadastrada com sucesso!"
                                 onPlantCreated()
                             } catch (e: Exception) {
-                                message = "Erro ao salvar: ${e.message}"
+                                // e.message inclui a URL e os headers da requisição, com o token de acesso.
+                                message = "Não foi possível salvar a planta. Verifique sua conexão e tente novamente."
                             } finally {
                                 isLoading = false
                             }
