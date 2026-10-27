@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import supabase
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +72,17 @@ fun DetalhePlantaScreen(
         carregando = false
     }
 
+    DetalhePlantaContent(planta = planta, carregando = carregando, onBack = onBack, actions = actions)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetalhePlantaContent(
+    planta: Planta?,
+    carregando: Boolean,
+    onBack: () -> Unit,
+    actions: @Composable () -> Unit = {},
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -107,7 +120,7 @@ fun DetalhePlantaScreen(
                     )
 
                 else -> {
-                    val p = planta!!
+                    val p = planta
                     Column(
                         modifier =
                             Modifier
@@ -144,6 +157,27 @@ fun DetalhePlantaScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun DetalhePlantaScreenPreview() {
+    BioMapaTheme {
+        Surface {
+            DetalhePlantaContent(
+                planta =
+                    Planta(
+                        id = 1,
+                        userId = DEV_USER_ID,
+                        nome = "Boldo",
+                        localizacao = "Próximo ao Setor de Aulas II",
+                        propriedadesMedicas = "Auxilia na digestão e no alívio de desconfortos estomacais.",
+                    ),
+                carregando = false,
+                onBack = {},
+            )
         }
     }
 }
